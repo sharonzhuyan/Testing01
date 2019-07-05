@@ -1,0 +1,21 @@
+library(tidyverse)
+library(httr)
+library(jsonlite)
+
+username <-'sharonzhuyan'
+url_git <-'https://api.github.com/'
+repos <-GET(url=paste0(url_git,'users/',username,'/repos'))
+
+names(repos)
+status_code(repos)
+# 1XX - Informational
+# 2XX - Success!
+# 3XX - Client Error (something’s not right on your end)
+# 4XX - Server Error (something’s not right on their end)
+
+repo_content <-content(repos)
+repo_df <- lapply(repo_content, function(x){
+  df <-data_frame(repo    = x$name,
+                  address = x$html_url,
+                  commits = x$git_commits_url)
+}) %>% bind_rows()
